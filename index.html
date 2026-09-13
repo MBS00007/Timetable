@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#102b35" />
+    <title>Northwest University, Kano | Class Timetable</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <main class="main-content">
+        <header class="topbar">
+          <div class="topbar-meta">
+            <span class="status-pill"><i></i>Timetable live</span
+            ><button class="help-button" id="help-button" aria-label="Help">
+              ?
+            </button>
+          </div>
+        </header>
+        <div class="content-wrap">
+          <section class="view is-visible" data-page="home">
+            <header class="identity-block">
+              <img
+                class="crest-image crest-large"
+                src="northwest-university-logo.png"
+                alt="Northwest University, Kano crest"
+              />
+              <div>
+                <p class="institution-line">
+                  Faculty of Computing <b>•</b> Department of Software
+                  Engineering
+                </p>
+                <h1>Northwest University, Kano</h1>
+                <p class="identity-copy">
+                  Your single source for the Software Engineering class
+                  timetable, venues, and important updates.
+                </p>
+              </div>
+              <div class="semester-label">
+                <span>Current session</span><strong>Second Semester</strong
+                ><small>2025/2026 Session</small>
+              </div>
+            </header>
+            <div class="hero-grid">
+              <section class="next-class-card">
+                <div class="eyebrow light">Next class</div>
+                <div class="next-class-top">
+                  <span id="next-day">Loading...</span
+                  ><span class="next-arrow">↗</span>
+                </div>
+                <h2 id="next-course">Loading next class...</h2>
+                <p id="next-course-meta"></p>
+                <div class="next-details">
+                  <span><b>TIME</b><strong id="next-time">--:--</strong></span
+                  ><span><b>VENUE</b><strong id="next-venue">—</strong></span
+                  ><button class="calendar-primary" id="next-calendar">
+                    ＋ Add to Calendar
+                  </button>
+                </div>
+              </section>
+              <section class="today-card">
+                <div class="card-heading">
+                  <div>
+                    <span class="eyebrow">Today</span>
+                    <h2 id="today-label">Today’s classes</h2>
+                  </div>
+                  <span class="today-date" id="today-date"></span>
+                </div>
+                <div id="today-list" class="today-list"></div>
+              </section>
+            </div>
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">Week at a glance</span>
+                <h2>Find your classes</h2>
+              </div>
+              <button class="text-link" data-view-target="timetable">
+                See full timetable <span>→</span>
+              </button>
+            </div>
+            <div
+              class="day-tabs home-tabs"
+              role="tablist"
+              aria-label="Filter timetable by day"
+            >
+              <button class="day-tab is-active" data-day="all" role="tab">
+                All classes</button
+              ><button class="day-tab" data-day="Monday" role="tab">
+                Monday</button
+              ><button class="day-tab" data-day="Tuesday" role="tab">
+                Tuesday</button
+              ><button class="day-tab" data-day="Wednesday" role="tab">
+                Wednesday</button
+              ><button class="day-tab" data-day="Thursday" role="tab">
+                Thursday</button
+              ><button class="day-tab" data-day="Friday" role="tab">
+                Friday
+              </button>
+            </div>
+            <div id="timetable-list" class="timetable-list"></div>
+            <div class="bottom-grid">
+              <section class="notice-panel">
+                <div class="notice-icon">✓</div>
+                <div>
+                  <span class="eyebrow">Timetable status</span>
+                  <h2>Everything is confirmed.</h2>
+                  <p>
+                    All lecture courses have a confirmed day, time, and venue.
+                    Placement / SIWES activities are excluded because they are
+                    not lecture sessions.
+                  </p>
+                  <small
+                    >Valid through <strong>31 July 2026</strong> · Slots may
+                    still change. Check announcements for updates.</small
+                  >
+                </div>
+              </section>
+              <section class="announcements-preview">
+                <div class="section-heading compact-heading">
+                  <div>
+                    <span class="eyebrow">Stay informed</span>
+                    <h2>Latest updates</h2>
+                  </div>
+                  <button class="text-link" data-view-target="announcements">
+                    View all
+                  </button>
+                </div>
+                <div id="announcement-preview"></div>
+              </section>
+            </div>
+          </section>
+          <section class="view" data-page="timetable">
+            <div class="page-title-row">
+              <div>
+                <span class="eyebrow">Department schedule</span>
+                <h1>Full timetable</h1>
+                <p>All confirmed lecture sessions for Software Engineering.</p>
+              </div>
+              <button class="outline-button" id="export-all">
+                ↓ Export timetable
+              </button>
+            </div>
+            <div class="day-tabs timetable-tabs" role="tablist">
+              <button class="day-tab is-active" data-day="all">
+                All classes</button
+              ><button class="day-tab" data-day="Monday">Monday</button
+              ><button class="day-tab" data-day="Tuesday">Tuesday</button
+              ><button class="day-tab" data-day="Wednesday">Wednesday</button
+              ><button class="day-tab" data-day="Thursday">Thursday</button
+              ><button class="day-tab" data-day="Friday">Friday</button>
+            </div>
+            <div id="full-timetable-list" class="timetable-list"></div>
+          </section>
+          <section class="view" data-page="announcements">
+            <div class="page-title-row">
+              <div>
+                <span class="eyebrow">Keep up to date</span>
+                <h1>Announcements</h1>
+                <p>Recent changes and notices from the department.</p>
+              </div>
+            </div>
+            <div id="announcements-list" class="announcement-list"></div>
+          </section>
+        </div>
+        <footer>
+          <span
+            >Built for Software Engineering students at Northwest University,
+            Kano.</span
+          ><a href="mailto:softwareengineering@nwu.edu.ng"
+            >Contact the department →</a
+          >
+        </footer>
+      </main>
+    </div>
+    <nav class="bottom-nav" aria-label="Mobile navigation">
+      <a class="nav-link is-active" href="#home" data-view="home"
+        ><span>⌂</span><small>Overview</small></a
+      ><a class="nav-link" href="#timetable" data-view="timetable"
+        ><span>▦</span><small>Timetable</small></a
+      ><a class="nav-link" href="#announcements" data-view="announcements"
+        ><span>◌</span><small>Updates</small></a
+      >
+    </nav>
+    <dialog class="help-dialog" id="help-dialog">
+      <button class="dialog-close" id="close-help" aria-label="Close help">
+        ×
+      </button>
+      <span class="eyebrow">Quick guide</span>
+      <h2>Using the timetable</h2>
+      <p>
+        Choose a weekday tab to narrow the list, or leave “All classes” selected
+        to see the complete week.
+      </p>
+      <p>
+        Use <strong>Add to Calendar</strong> to download a real calendar event.
+        Check Announcements for room changes and cancellations.
+      </p>
+      <button class="dialog-action" id="dialog-done">Got it</button>
+    </dialog>
+    <dialog class="calendar-options" id="calendar-options">
+      <button
+        class="dialog-close"
+        id="cancel-calendar"
+        aria-label="Cancel calendar options"
+      >
+        ×
+      </button>
+      <span class="eyebrow">Add to calendar</span>
+      <h2>Choose an option</h2>
+      <button class="dialog-action" id="download-ics">Download .ics</button>
+      <button class="dialog-action dialog-secondary" id="google-calendar">
+        Google Calendar
+      </button>
+    </dialog>
+    <div class="toast" role="status" aria-live="polite"></div>
+    <script src="script.js"></script>
+  </body>
+</html>

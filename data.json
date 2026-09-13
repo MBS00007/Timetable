@@ -1,0 +1,113 @@
+{
+  "settings": {
+    "university": "Northwest University, Kano",
+    "faculty": "Faculty of Computing",
+    "department": "Department of Software Engineering",
+    "semester": "Second Semester",
+    "session": "2025/2026 Session",
+    "validThrough": "31 July 2026",
+    "lastLectureDate": "30 November 2026"
+  },
+  "timetable": [
+    {
+      "code": "SEN 220",
+      "name": "Software Requirements Engineering",
+      "day": "Monday",
+      "start": "08:00",
+      "end": "10:00",
+      "venue": "LT 1",
+      "lecturer": "Dr. A. Yusuf",
+      "tone": "gold"
+    },
+    {
+      "code": "SEN 226",
+      "name": "Web Application Development",
+      "day": "Monday",
+      "start": "10:00",
+      "end": "12:00",
+      "venue": "Software Engineering Lab 2",
+      "lecturer": "Engr. M. Bello",
+      "tone": "teal"
+    },
+    {
+      "code": "SEN 224",
+      "name": "Software Architecture",
+      "day": "Tuesday",
+      "start": "09:00",
+      "end": "11:00",
+      "venue": "LT 2",
+      "lecturer": "Dr. S. Ibrahim",
+      "tone": "coral"
+    },
+    {
+      "code": "GST 212",
+      "name": "Entrepreneurship Studies",
+      "day": "Tuesday",
+      "start": "12:00",
+      "end": "14:00",
+      "venue": "New Theatre",
+      "lecturer": "Mrs. K. Umar",
+      "tone": "blue"
+    },
+    {
+      "code": "SEN 222",
+      "name": "Database Management Systems",
+      "day": "Wednesday",
+      "start": "08:00",
+      "end": "10:00",
+      "venue": "Software Engineering Lab 1",
+      "lecturer": "Dr. H. Musa",
+      "tone": "purple"
+    },
+    {
+      "code": "SEN 228",
+      "name": "Software Testing & Quality Assurance",
+      "day": "Wednesday",
+      "start": "11:00",
+      "end": "13:00",
+      "venue": "LT 3",
+      "lecturer": "Engr. F. Abdullahi",
+      "tone": "teal"
+    },
+    {
+      "code": "SEN 230",
+      "name": "Project Management",
+      "day": "Thursday",
+      "start": "10:00",
+      "end": "12:00",
+      "venue": "LT 1",
+      "lecturer": "Dr. N. Lawal",
+      "tone": "gold"
+    },
+    {
+      "code": "SEN 232",
+      "name": "Human Computer Interaction",
+      "day": "Friday",
+      "start": "08:00",
+      "end": "10:00",
+      "venue": "Design Studio",
+      "lecturer": "Mrs. R. Salisu",
+      "tone": "coral"
+    }
+  ],
+  "announcements": [
+    {
+      "date": "08 Sep 2026",
+      "type": "Room change",
+      "title": "SEN 226 moves to Software Engineering Lab 2",
+      "copy": "The Web Application Development lecture on Monday will now hold in Software Engineering Lab 2."
+    },
+    {
+      "date": "02 Sep 2026",
+      "type": "Reminder",
+      "title": "Second semester timetable is complete",
+      "copy": "All lecture courses now have confirmed venues. Please check the timetable before each class."
+    },
+    {
+      "date": "28 Aug 2026",
+      "type": "Notice",
+      "title": "SIWES / placement is not included",
+      "copy": "Placement activities are not lecture sessions and are therefore excluded from this timetable."
+    }
+  ]
+}
