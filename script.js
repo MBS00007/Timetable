@@ -130,14 +130,28 @@ function escapeICS(value) {
     .replace(/,/g, "\\,")
     .replace(/\r?\n/g, "\\n");
 }
+async function fetchJsonFromApi(pathname) {
+  const sameOriginResponse = await fetch(pathname);
+  if (sameOriginResponse.ok) return sameOriginResponse;
+
+  if (
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1") &&
+    window.location.port === "3000"
+  ) {
+    const fallbackResponse = await fetch(`http://localhost:4000${pathname}`);
+    if (fallbackResponse.ok) return fallbackResponse;
+  }
+
+  return sameOriginResponse;
+}
+
 async function loadBackendData() {
   if (window.location.protocol === "file:") return false;
   try {
-    const backendOrigin =
-      window.location.port === "3000" ? "http://localhost:4000" : "";
     const [timetableResponse, announcementsResponse] = await Promise.all([
-      fetch(`${backendOrigin}/api/timetable`),
-      fetch(`${backendOrigin}/api/announcements`),
+      fetchJsonFromApi("/api/timetable"),
+      fetchJsonFromApi("/api/announcements"),
     ]);
     if (!timetableResponse.ok || !announcementsResponse.ok) return false;
     timetable = await timetableResponse.json();
