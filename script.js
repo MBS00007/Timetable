@@ -1,106 +1,7 @@
-// Keep timetable data in one place so it can later be replaced by an API response.
-let timetable = [
-  {
-    code: "SEN 220",
-    name: "Software Requirements Engineering",
-    day: "Monday",
-    start: "08:00",
-    end: "10:00",
-    venue: "LT 1",
-    lecturer: "Dr. A. Yusuf",
-    tone: "gold",
-  },
-  {
-    code: "SEN 226",
-    name: "Web Application Development",
-    day: "Monday",
-    start: "10:00",
-    end: "12:00",
-    venue: "Software Engineering Lab 2",
-    lecturer: "Engr. M. Bello",
-    tone: "teal",
-  },
-  {
-    code: "SEN 224",
-    name: "Software Architecture",
-    day: "Tuesday",
-    start: "09:00",
-    end: "11:00",
-    venue: "LT 2",
-    lecturer: "Dr. S. Ibrahim",
-    tone: "coral",
-  },
-  {
-    code: "GST 212",
-    name: "Entrepreneurship Studies",
-    day: "Tuesday",
-    start: "12:00",
-    end: "14:00",
-    venue: "New Theatre",
-    lecturer: "Mrs. K. Umar",
-    tone: "blue",
-  },
-  {
-    code: "SEN 222",
-    name: "Database Management Systems",
-    day: "Wednesday",
-    start: "08:00",
-    end: "10:00",
-    venue: "Software Engineering Lab 1",
-    lecturer: "Dr. H. Musa",
-    tone: "purple",
-  },
-  {
-    code: "SEN 228",
-    name: "Software Testing & Quality Assurance",
-    day: "Wednesday",
-    start: "11:00",
-    end: "13:00",
-    venue: "LT 3",
-    lecturer: "Engr. F. Abdullahi",
-    tone: "teal",
-  },
-  {
-    code: "SEN 230",
-    name: "Project Management",
-    day: "Thursday",
-    start: "10:00",
-    end: "12:00",
-    venue: "LT 1",
-    lecturer: "Dr. N. Lawal",
-    tone: "gold",
-  },
-  {
-    code: "SEN 232",
-    name: "Human Computer Interaction",
-    day: "Friday",
-    start: "08:00",
-    end: "10:00",
-    venue: "Design Studio",
-    lecturer: "Mrs. R. Salisu",
-    tone: "coral",
-  },
-];
-let announcements = [
-  {
-    date: "08 Sep 2026",
-    type: "Room change",
-    title: "SEN 226 moves to Software Engineering Lab 2",
-    copy: "The Web Application Development lecture on Monday will now hold in Software Engineering Lab 2.",
-  },
-  {
-    date: "02 Sep 2026",
-    type: "Reminder",
-    title: "Second semester timetable is complete",
-    copy: "All lecture courses now have confirmed venues. Please check the timetable before each class.",
-  },
-  {
-    date: "28 Aug 2026",
-    type: "Notice",
-    title: "SIWES / placement is not included",
-    copy: "Placement activities are not lecture sessions and are therefore excluded from this timetable.",
-  },
-];
+// Timetable, announcements, and settings populated from Supabase API backend
+let timetable = [];
+let announcements = [];
+let settings = null;
 const weekday = [
   "Sunday",
   "Monday",
@@ -112,7 +13,7 @@ const weekday = [
 ];
 const today = new Date();
 const currentDay = weekday[today.getDay()];
-const dayOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+const dayOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const formatDayDate = (date) =>
   new Intl.DateTimeFormat("en-GB", {
     weekday: "long",
@@ -134,33 +35,49 @@ async function fetchJsonFromApi(pathname) {
   const sameOriginResponse = await fetch(pathname);
   if (sameOriginResponse.ok) return sameOriginResponse;
 
-  if (
-    (window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1") &&
-    window.location.port === "3000"
-  ) {
-    const fallbackResponse = await fetch(`http://localhost:4000${pathname}`);
-    if (fallbackResponse.ok) return fallbackResponse;
-  }
+  if (window.location.protocol === "file:") {
+  const fallbackResponse = await fetch(`http://localhost:4000${pathname}`);
+  if (fallbackResponse.ok) return fallbackResponse;
+} else if (
+  (window.location.hostname === "localhost" ||
+   window.location.hostname === "127.0.0.1") &&
+  window.location.port &&
+  window.location.port !== "4000"
+) {
+  const fallbackResponse = await fetch(`http://localhost:4000${pathname}`);
+  if (fallbackResponse.ok) return fallbackResponse;
+}
 
   return sameOriginResponse;
 }
 
 async function loadBackendData() {
-  if (window.location.protocol === "file:") return false;
   try {
-    const [timetableResponse, announcementsResponse] = await Promise.all([
-      fetchJsonFromApi("/api/timetable"),
-      fetchJsonFromApi("/api/announcements"),
-    ]);
-    if (!timetableResponse.ok || !announcementsResponse.ok) return false;
-    timetable = await timetableResponse.json();
-    announcements = await announcementsResponse.json();
-    return true;
+    const [timetableResponse, announcementsResponse, settingsResponse] =
+      await Promise.all([
+        fetchJsonFromApi("/api/timetable"),
+        fetchJsonFromApi("/api/announcements"),
+        fetchJsonFromApi("/api/settings"),
+      ]);
+    if (timetableResponse.ok) timetable = await timetableResponse.json();
+    if (announcementsResponse.ok) announcements = await announcementsResponse.json();
+    if (settingsResponse.ok) settings = await settingsResponse.json();
+    return timetableResponse.ok && announcementsResponse.ok;
   } catch (error) {
-    console.warn("Backend unavailable; using local fallback data.", error);
+    console.warn("Backend unavailable or failed to fetch data", error);
     return false;
   }
+}
+
+function renderSettings() {
+  if (!settings) return;
+  const semesterEl = document.querySelector("#semester-name");
+  const sessionEl = document.querySelector("#session-name");
+  const validThroughEl = document.querySelector("#valid-through-date");
+
+  if (semesterEl && settings.semester) semesterEl.textContent = settings.semester;
+  if (sessionEl && settings.session) sessionEl.textContent = settings.session;
+  if (validThroughEl && settings.validThrough) validThroughEl.textContent = settings.validThrough;
 }
 function toMinutes(value) {
   const [hours, minutes] = value.split(":").map(Number);
@@ -362,11 +279,11 @@ function renderToday() {
   document.querySelector("#today-date").textContent = formatShortDate(today);
   list.innerHTML = items.length
     ? items
-        .map(
-          (item) =>
-            `<div class="today-row"><span class="today-time">${item.start}</span><span class="today-marker ${item.tone}"></span><div><strong>${item.code}</strong><small>${item.name}</small><small>⌖ ${item.venue}</small></div></div>`,
-        )
-        .join("")
+      .map(
+        (item) =>
+          `<div class="today-row"><span class="today-time">${item.start}</span><span class="today-marker ${item.tone}"></span><div><strong>${item.code}</strong><small>${item.name}</small><small>⌖ ${item.venue}</small></div></div>`,
+      )
+      .join("")
     : `<div class="today-empty"><strong>No classes today 🎉</strong><span>Enjoy the breathing room.</span></div>`;
 }
 function renderNextClass() {
@@ -421,11 +338,14 @@ function showView(view) {
     );
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
+let toastTimer = null;
 function showToast(message) {
   const toast = document.querySelector(".toast");
+  if (!toast) return;
   toast.textContent = message;
   toast.classList.add("is-visible");
-  setTimeout(() => toast.classList.remove("is-visible"), 2600);
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 2800);
 }
 document.querySelectorAll("[data-view]").forEach((link) =>
   link.addEventListener("click", (event) => {
@@ -480,8 +400,139 @@ document.querySelector("#cancel-calendar")?.addEventListener("click", () => {
   pendingCalendarEvent = null;
   calendarOptions.close();
 });
+
+// Share Platform Dialog & Actions
+const shareDialog = document.querySelector("#share-dialog");
+const openShareBtn = document.querySelector("#open-share-dialog");
+const closeShareBtn = document.querySelector("#close-share");
+const shareUrlInput = document.querySelector("#share-url-input");
+const shareCopyBtn = document.querySelector("#share-copy-btn");
+const shareWhatsappBtn = document.querySelector("#share-whatsapp");
+const shareFacebookBtn = document.querySelector("#share-facebook");
+const shareInstagramBtn = document.querySelector("#share-instagram");
+
+function getPublicShareUrl() {
+  if (window.location.protocol === "file:") {
+    return window.location.href;
+  }
+  return `${window.location.origin}${window.location.pathname}`;
+}
+
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (e) {
+      console.warn("Clipboard API writeText failed, trying fallback", e);
+    }
+  }
+  try {
+    const tempInput = document.createElement("input");
+    tempInput.value = text;
+    tempInput.style.position = "fixed";
+    tempInput.style.left = "-9999px";
+    tempInput.style.top = "0";
+    document.body.appendChild(tempInput);
+    tempInput.focus();
+    tempInput.select();
+    const successful = document.execCommand("copy");
+    document.body.removeChild(tempInput);
+    return successful;
+  } catch (err) {
+    console.error("Copy fallback failed", err);
+    return false;
+  }
+}
+
+function openShareModal() {
+  if (!shareDialog) return;
+  const currentUrl = getPublicShareUrl();
+  if (shareUrlInput) {
+    shareUrlInput.value = currentUrl;
+  }
+  shareDialog.showModal();
+}
+
+function closeShareModal() {
+  if (!shareDialog) return;
+  shareDialog.close();
+}
+
+openShareBtn?.addEventListener("click", () => {
+  openShareModal();
+});
+
+closeShareBtn?.addEventListener("click", () => {
+  closeShareModal();
+});
+
+// Close when clicking outside modal dialog (backdrop)
+shareDialog?.addEventListener("click", (event) => {
+  if (event.target === shareDialog) {
+    closeShareModal();
+  }
+});
+
+// Close with Escape key
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && shareDialog && shareDialog.open) {
+    closeShareModal();
+  }
+});
+
+// WhatsApp Share
+shareWhatsappBtn?.addEventListener("click", () => {
+  const url = getPublicShareUrl();
+  const shareText = `Northwest University, Kano — Class Timetable & Updates: ${url}`;
+  const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+  window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+});
+
+// Facebook Share
+shareFacebookBtn?.addEventListener("click", () => {
+  const url = getPublicShareUrl();
+  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+  window.open(facebookUrl, "_blank", "noopener,noreferrer");
+});
+
+// Instagram Share
+shareInstagramBtn?.addEventListener("click", async () => {
+  const url = getPublicShareUrl();
+  await copyTextToClipboard(url);
+  showToast("Link copied to clipboard! Opening Instagram to share...");
+  setTimeout(() => {
+    window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
+  }, 400);
+});
+
+// Copy Link Button
+shareCopyBtn?.addEventListener("click", async () => {
+  const url = getPublicShareUrl();
+  const copied = await copyTextToClipboard(url);
+  if (copied) {
+    showToast("Link copied to clipboard!");
+    const btnText = shareCopyBtn.querySelector(".copy-btn-text");
+    if (btnText) {
+      const originalText = btnText.textContent;
+      btnText.textContent = "Copied!";
+      shareCopyBtn.classList.add("copied");
+      setTimeout(() => {
+        btnText.textContent = originalText;
+        shareCopyBtn.classList.remove("copied");
+      }, 2000);
+    }
+  } else {
+    showToast("Failed to copy link. Please copy manually.");
+  }
+});
+
 async function initializeApp() {
-  await loadBackendData();
+  const success = await loadBackendData();
+  if (!success && !timetable.length) {
+    showToast("Unable to reach backend server. Please ensure Express backend is running.");
+  }
+  renderSettings();
   renderNextClass();
   renderToday();
   renderAnnouncements();
@@ -489,3 +540,4 @@ async function initializeApp() {
   renderList(document.querySelector("#full-timetable-list"));
 }
 initializeApp();
+

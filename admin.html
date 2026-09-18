@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#102b35" />
+    <title>Admin Dashboard | Northwest University, Kano</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <main class="main-content">
+        <header class="topbar">
+          <div class="topbar-meta">
+            <span class="status-pill"><i></i>Admin Panel</span>
+            <a href="index.html" class="outline-button" style="padding: 4px 12px; font-size: 12px; border-radius: 4px;">← Back to Public Site</a>
+          </div>
+        </header>
+
+        <div class="content-wrap">
+          <!-- Login View (Shown when unauthenticated) -->
+          <section id="view-login" style="max-width: 440px; margin: 40px auto 0;">
+            <div class="identity-block" style="flex-direction: column; text-align: center; gap: 16px; margin-bottom: 24px;">
+              <img
+                class="crest-image crest-large"
+                src="northwest-university-logo.png"
+                alt="Northwest University, Kano crest"
+                style="margin: 0 auto;"
+              />
+              <div>
+                <h1>Admin Login</h1>
+                <p class="identity-copy">
+                  Sign in with your administrator credentials to access the management portal.
+                </p>
+              </div>
+            </div>
+
+            <form id="form-login" class="notice-panel" style="display: block;">
+              <div id="login-error" class="login-error-msg" style="display: none;"></div>
+              <div class="admin-form-group">
+                <label for="login-email">Administrator Email</label>
+                <input type="email" id="login-email" placeholder="muhammadsanigambo27@gmail.com" required />
+              </div>
+              <div class="admin-form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" placeholder="••••••••" required />
+              </div>
+              <div style="margin-top: 20px;">
+                <button type="submit" class="calendar-primary" style="width: 100%;">Sign In to Dashboard</button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Admin Dashboard View (Shown when authenticated) -->
+          <div id="view-dashboard" style="display: none;">
+            <section class="identity-block" style="margin-bottom: 24px; position: relative;">
+              <img
+                class="crest-image crest-large"
+                src="northwest-university-logo.png"
+                alt="Northwest University, Kano crest"
+              />
+              <div>
+                <p class="institution-line">
+                  Faculty of Computing <b>•</b> Department of Software Engineering
+                </p>
+                <h1>Admin Management Dashboard</h1>
+                <p class="identity-copy">
+                  Logged in as <strong id="admin-user-email">admin@nwu.edu.ng</strong>
+                </p>
+              </div>
+              <button id="btn-logout" class="action-btn delete" style="position: absolute; right: 0; top: 0; padding: 8px 16px;">Sign Out</button>
+            </section>
+
+            <!-- Admin Navigation Tabs -->
+            <div class="day-tabs" role="tablist" id="admin-tabs">
+              <button class="day-tab is-active" data-tab="courses" role="tab">📘 Courses</button>
+              <button class="day-tab" data-tab="timetable" role="tab">📅 Timetable</button>
+              <button class="day-tab" data-tab="announcements" role="tab">📢 Announcements</button>
+              <button class="day-tab" data-tab="settings" role="tab">⚙️ System Settings</button>
+            </div>
+
+            <!-- Courses Tab Content -->
+            <section id="tab-courses" class="admin-tab-content">
+              <div class="admin-header">
+                <div>
+                  <h2>Manage Courses</h2>
+                  <p>Add, update, or remove courses offered in the department.</p>
+                </div>
+                <button class="calendar-primary" id="btn-add-course">＋ Add New Course</button>
+              </div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Code</th>
+                      <th>Course Name</th>
+                      <th>Lecturer</th>
+                      <th>Tone</th>
+                      <th>PDF</th>
+                      <th class="actions">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="courses-table-body">
+                    <tr><td colspan="6">Loading courses...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <!-- Timetable Tab Content -->
+            <section id="tab-timetable" class="admin-tab-content" style="display: none;">
+              <div class="admin-header">
+                <div>
+                  <h2>Manage Timetable Entries</h2>
+                  <p>Schedule lecture days, times, and venues for courses.</p>
+                </div>
+                <button class="calendar-primary" id="btn-add-timetable">＋ Add Timetable Slot</button>
+              </div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Day</th>
+                      <th>Time</th>
+                      <th>Course</th>
+                      <th>Venue</th>
+                      <th>Lecturer</th>
+                      <th class="actions">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="timetable-table-body">
+                    <tr><td colspan="6">Loading timetable entries...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <!-- Announcements Tab Content -->
+            <section id="tab-announcements" class="admin-tab-content" style="display: none;">
+              <div class="admin-header">
+                <div>
+                  <h2>Manage Announcements</h2>
+                  <p>Publish notices, room changes, and department updates.</p>
+                </div>
+                <button class="calendar-primary" id="btn-add-announcement">＋ Add Announcement</button>
+              </div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Type</th>
+                      <th>Title</th>
+                      <th>Status</th>
+                      <th class="actions">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="announcements-table-body">
+                    <tr><td colspan="5">Loading announcements...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <!-- System Settings Tab Content -->
+            <section id="tab-settings" class="admin-tab-content" style="display: none;">
+              <div class="admin-header">
+                <div>
+                  <h2>Manage University Settings</h2>
+                  <p>Configure dynamic session labels, faculty details, and timetable validity dates.</p>
+                </div>
+              </div>
+              <form id="form-settings" class="notice-panel" style="max-width: 680px; display: block;">
+                <div class="admin-form-group">
+                  <label for="set-university">University Name</label>
+                  <input type="text" id="set-university" required />
+                </div>
+                <div class="admin-form-grid">
+                  <div class="admin-form-group">
+                    <label for="set-faculty">Faculty</label>
+                    <input type="text" id="set-faculty" required />
+                  </div>
+                  <div class="admin-form-group">
+                    <label for="set-department">Department</label>
+                    <input type="text" id="set-department" required />
+                  </div>
+                </div>
+                <div class="admin-form-grid">
+                  <div class="admin-form-group">
+                    <label for="set-semester">Semester Label</label>
+                    <input type="text" id="set-semester" required />
+                  </div>
+                  <div class="admin-form-group">
+                    <label for="set-session">Academic Session</label>
+                    <input type="text" id="set-session" required />
+                  </div>
+                </div>
+                <div class="admin-form-grid">
+                  <div class="admin-form-group">
+                    <label for="set-valid-through">Timetable Valid Through</label>
+                    <input type="date" id="set-valid-through" required />
+                  </div>
+                  <div class="admin-form-group">
+                    <label for="set-last-lecture">Last Lecture Date</label>
+                    <input type="date" id="set-last-lecture" required />
+                  </div>
+                </div>
+                <div style="margin-top: 20px;">
+                  <button type="submit" class="calendar-primary">Save Settings</button>
+                </div>
+              </form>
+            </section>
+
+          </div>
+        </div>
+
+        <footer style="margin-top: 60px;">
+          <span>Northwest University, Kano — Admin Management System</span>
+        </footer>
+      </main>
+    </div>
+
+    <!-- Course Modal -->
+    <dialog class="admin-dialog" id="modal-course">
+      <h2 id="modal-course-title">Add Course</h2>
+      <form id="form-course">
+        <input type="hidden" id="course-id" />
+        <div class="admin-form-grid">
+          <div class="admin-form-group">
+            <label for="course-code">Course Code *</label>
+            <input type="text" id="course-code" placeholder="e.g. SEN 226" required />
+          </div>
+          <div class="admin-form-group">
+            <label for="course-tone">Card Tone Accent</label>
+            <select id="course-tone">
+              <option value="gold">Gold</option>
+              <option value="teal" selected>Teal</option>
+              <option value="coral">Coral</option>
+              <option value="blue">Blue</option>
+              <option value="purple">Purple</option>
+            </select>
+          </div>
+        </div>
+        <div class="admin-form-group">
+          <label for="course-name">Course Name *</label>
+          <input type="text" id="course-name" placeholder="e.g. Web Application Development" required />
+        </div>
+        <div class="admin-form-group">
+          <label for="course-lecturer">Lecturer Name</label>
+          <input type="text" id="course-lecturer" placeholder="e.g. Engr. M. Bello" />
+        </div>
+        <div class="admin-form-group">
+          <label for="course-description">Description</label>
+          <textarea id="course-description" rows="3" placeholder="Optional course summary"></textarea>
+        </div>
+        <div class="admin-form-grid">
+          <div class="admin-form-group">
+            <label for="course-pdf-url">PDF Material URL</label>
+            <input type="text" id="course-pdf-url" placeholder="https://..." />
+          </div>
+          <div class="admin-form-group">
+            <label for="course-pdf-filename">PDF Material Filename</label>
+            <input type="text" id="course-pdf-filename" placeholder="syllabus.pdf" />
+          </div>
+        </div>
+        <div class="admin-modal-actions">
+          <button type="button" class="action-btn" id="close-modal-course">Cancel</button>
+          <button type="submit" class="calendar-primary">Save Course</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Timetable Modal -->
+    <dialog class="admin-dialog" id="modal-timetable">
+      <h2 id="modal-timetable-title">Add Timetable Slot</h2>
+      <form id="form-timetable">
+        <input type="hidden" id="timetable-id" />
+        <div class="admin-form-group">
+          <label for="timetable-course-id">Select Course *</label>
+          <select id="timetable-course-id" required>
+            <option value="">Select a course...</option>
+          </select>
+        </div>
+        <div class="admin-form-grid">
+          <div class="admin-form-group">
+            <label for="timetable-day">Day of Week *</label>
+            <select id="timetable-day" required>
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+              <option value="Sunday">Sunday</option>
+            </select>
+          </div>
+          <div class="admin-form-group">
+            <label for="timetable-venue">Venue *</label>
+            <input type="text" id="timetable-venue" placeholder="e.g. LT 1" required />
+          </div>
+        </div>
+        <div class="admin-form-grid">
+          <div class="admin-form-group">
+            <label for="timetable-start">Start Time *</label>
+            <input type="time" id="timetable-start" required />
+          </div>
+          <div class="admin-form-group">
+            <label for="timetable-end">End Time *</label>
+            <input type="time" id="timetable-end" required />
+          </div>
+        </div>
+        <div class="admin-modal-actions">
+          <button type="button" class="action-btn" id="close-modal-timetable">Cancel</button>
+          <button type="submit" class="calendar-primary">Save Slot</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Announcement Modal -->
+    <dialog class="admin-dialog" id="modal-announcement">
+      <h2 id="modal-announcement-title">Add Announcement</h2>
+      <form id="form-announcement">
+        <input type="hidden" id="announcement-id" />
+        <div class="admin-form-grid">
+          <div class="admin-form-group">
+            <label for="announcement-type">Type *</label>
+            <select id="announcement-type" required>
+              <option value="Room change">Room change</option>
+              <option value="Reminder">Reminder</option>
+              <option value="Notice">Notice</option>
+              <option value="Cancellation">Cancellation</option>
+            </select>
+          </div>
+          <div class="admin-form-group">
+            <label for="announcement-published">Publish Status</label>
+            <select id="announcement-published">
+              <option value="true">Published</option>
+              <option value="false">Draft / Unpublished</option>
+            </select>
+          </div>
+        </div>
+        <div class="admin-form-group">
+          <label for="announcement-title">Title *</label>
+          <input type="text" id="announcement-title" placeholder="e.g. SEN 226 moves to Software Engineering Lab 2" required />
+        </div>
+        <div class="admin-form-group">
+          <label for="announcement-content">Content / Copy *</label>
+          <textarea id="announcement-content" rows="4" placeholder="Detailed announcement notice text..." required></textarea>
+        </div>
+        <div class="admin-modal-actions">
+          <button type="button" class="action-btn" id="close-modal-announcement">Cancel</button>
+          <button type="submit" class="calendar-primary">Save Announcement</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="toast" role="status" aria-live="polite"></div>
+    <script src="admin.js"></script>
+  </body>
+</html>

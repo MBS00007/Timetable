@@ -40,17 +40,48 @@ function serveFile(response, requestPath) {
 }
 const server = http.createServer((request, response) => {
   const url = new URL(request.url, `http://${request.headers.host}`);
-  if (request.method === "GET" && url.pathname === "/api/health")
-    return sendJson(response, 200, {
-      ok: true,
-      service: "Northwest University timetable",
+  console.log(`[local-server:3000] Incoming Request: ${request.method} ${request.url}`);
+
+
+  if (url.pathname.startsWith("/api/")) {
+    const backendPort = Number(process.env.BACKEND_PORT) || 4000;
+    const proxyOptions = {
+      hostname: "localhost",
+      port: backendPort,
+      path: `${url.pathname}${url.search}`,
+      method: request.method,
+      headers: {
+        ...request.headers,
+        host: `localhost:${backendPort}`,
+      },
+    };
+
+    const proxyReq = http.request(proxyOptions, (proxyRes) => {
+      response.writeHead(proxyRes.statusCode, proxyRes.headers);
+      proxyRes.pipe(response, { end: true });
     });
-  if (request.method === "GET" && url.pathname === "/api/timetable")
-    return sendJson(response, 200, readData().timetable);
-  if (request.method === "GET" && url.pathname === "/api/announcements")
-    return sendJson(response, 200, readData().announcements);
-  if (request.method === "GET" && url.pathname === "/api/settings")
-    return sendJson(response, 200, readData().settings);
+
+    proxyReq.on("error", (err) => {
+      if (request.method === "GET") {
+        if (url.pathname === "/api/health")
+          return sendJson(response, 200, {
+            ok: true,
+            service: "Northwest University timetable",
+          });
+        if (url.pathname === "/api/timetable")
+          return sendJson(response, 200, readData().timetable);
+        if (url.pathname === "/api/announcements")
+          return sendJson(response, 200, readData().announcements);
+        if (url.pathname === "/api/settings")
+          return sendJson(response, 200, readData().settings);
+      }
+      sendJson(response, 502, { error: "Backend API server unavailable", details: err.message });
+    });
+
+    request.pipe(proxyReq, { end: true });
+    return;
+  }
+
   if (request.method === "GET")
     return serveFile(response, decodeURIComponent(url.pathname));
   response.writeHead(405, { Allow: "GET" });

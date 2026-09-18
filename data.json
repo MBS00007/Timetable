@@ -40,16 +40,6 @@
       "tone": "coral"
     },
     {
-      "code": "GST 212",
-      "name": "Entrepreneurship Studies",
-      "day": "Tuesday",
-      "start": "12:00",
-      "end": "14:00",
-      "venue": "New Theatre",
-      "lecturer": "Mrs. K. Umar",
-      "tone": "blue"
-    },
-    {
       "code": "SEN 222",
       "name": "Database Management Systems",
       "day": "Wednesday",
@@ -70,24 +60,64 @@
       "tone": "teal"
     },
     {
-      "code": "SEN 230",
-      "name": "Project Management",
+      "code": "COS202",
+      "name": "Computer Programming II",
       "day": "Thursday",
       "start": "10:00",
       "end": "12:00",
-      "venue": "LT 1",
-      "lecturer": "Dr. N. Lawal",
+      "venue": "BMS Rooms",
+      "lecturer": "Department Lecturer",
       "tone": "gold"
     },
     {
-      "code": "SEN 232",
-      "name": "Human Computer Interaction",
+      "code": "INS204",
+      "name": "System Analysis and Design",
+      "day": "Thursday",
+      "start": "12:00",
+      "end": "14:00",
+      "venue": "BMS Room 3",
+      "lecturer": "Department Lecturer",
+      "tone": "teal"
+    },
+    {
+      "code": "IFT212",
+      "name": "Computer Architecture and Organisation",
+      "day": "Thursday",
+      "start": "14:00",
+      "end": "16:00",
+      "venue": "Main Campus",
+      "lecturer": "Department Lecturer",
+      "tone": "coral"
+    },
+    {
+      "code": "GST212",
+      "name": "Philosophy, Logic and Human Existence",
       "day": "Friday",
       "start": "08:00",
       "end": "10:00",
-      "venue": "Design Studio",
-      "lecturer": "Mrs. R. Salisu",
-      "tone": "coral"
+      "venue": "Science Theatre B, Main Campus",
+      "lecturer": "Department Lecturer",
+      "tone": "blue"
+    },
+    {
+      "code": "MTH202",
+      "name": "Elementary Differential Equations",
+      "day": "Saturday",
+      "start": "10:00",
+      "end": "12:00",
+      "venue": "Indabawa Room 3, Main Campus",
+      "lecturer": "Department Lecturer",
+      "tone": "purple"
+    },
+    {
+      "code": "CYB204",
+      "name": "Python Programming",
+      "day": "Saturday",
+      "start": "10:00",
+      "end": "12:00",
+      "venue": "7th Floor, Main Campus",
+      "lecturer": "Department Lecturer",
+      "tone": "teal"
     }
   ],
   "announcements": [
