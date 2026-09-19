@@ -14,8 +14,8 @@ const API_BASE = window.__API_BASE__ !== undefined
      (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") &&
      window.location.port &&
      window.location.port !== "4000"
-      ? "http://localhost:4000"
-      : "");
+      ? `http://${window.location.hostname}:4000`
+      : (typeof window !== "undefined" && window.location.protocol === "file:" ? "http://127.0.0.1:4000" : ""));
 
 
 let currentSession = null;

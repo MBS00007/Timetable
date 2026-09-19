@@ -31,24 +31,42 @@ function escapeICS(value) {
     .replace(/,/g, "\\,")
     .replace(/\r?\n/g, "\\n");
 }
+const API_BASE = window.__API_BASE__ !== undefined
+  ? window.__API_BASE__
+  : (typeof window !== "undefined" &&
+     (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") &&
+     window.location.port &&
+     window.location.port !== "4000"
+      ? `http://${window.location.hostname}:4000`
+      : (typeof window !== "undefined" && window.location.protocol === "file:" ? "http://127.0.0.1:4000" : ""));
+
 async function fetchJsonFromApi(pathname) {
-  const sameOriginResponse = await fetch(pathname);
-  if (sameOriginResponse.ok) return sameOriginResponse;
+  // 1. Try configured API_BASE first
+  try {
+    const res = await fetch(`${API_BASE}${pathname}`);
+    if (res.ok) return res;
+  } catch (_) {}
 
-  if (window.location.protocol === "file:") {
-  const fallbackResponse = await fetch(`http://localhost:4000${pathname}`);
-  if (fallbackResponse.ok) return fallbackResponse;
-} else if (
-  (window.location.hostname === "localhost" ||
-   window.location.hostname === "127.0.0.1") &&
-  window.location.port &&
-  window.location.port !== "4000"
-) {
-  const fallbackResponse = await fetch(`http://localhost:4000${pathname}`);
-  if (fallbackResponse.ok) return fallbackResponse;
-}
+  // 2. If running locally and API_BASE failed, try alternate local addresses
+  const isLocal =
+    typeof window !== "undefined" &&
+    (window.location.protocol === "file:" ||
+     window.location.hostname === "localhost" ||
+     window.location.hostname === "127.0.0.1");
 
-  return sameOriginResponse;
+  if (isLocal) {
+    for (const host of ["127.0.0.1", "localhost"]) {
+      try {
+        const fallbackUrl = `http://${host}:4000${pathname}`;
+        if (fallbackUrl !== `${API_BASE}${pathname}`) {
+          const res = await fetch(fallbackUrl);
+          if (res.ok) return res;
+        }
+      } catch (_) {}
+    }
+  }
+
+  return { ok: false, json: async () => null };
 }
 
 async function loadBackendData() {
@@ -59,14 +77,37 @@ async function loadBackendData() {
         fetchJsonFromApi("/api/announcements"),
         fetchJsonFromApi("/api/settings"),
       ]);
+
     if (timetableResponse.ok) timetable = await timetableResponse.json();
     if (announcementsResponse.ok) announcements = await announcementsResponse.json();
     if (settingsResponse.ok) settings = await settingsResponse.json();
-    return timetableResponse.ok && announcementsResponse.ok;
+
+    if (Array.isArray(timetable) && timetable.length > 0) {
+      return true;
+    }
   } catch (error) {
-    console.warn("Backend unavailable or failed to fetch data", error);
-    return false;
+    console.warn("Backend API unavailable, attempting local fallback", error);
   }
+
+  // Fallback to data.json if backend was unreachable
+  try {
+    const fallbackRes = await fetch("data.json");
+    if (fallbackRes.ok) {
+      const fallbackData = await fallbackRes.json();
+      if (Array.isArray(fallbackData.timetable) && fallbackData.timetable.length) {
+        timetable = fallbackData.timetable;
+      }
+      if (Array.isArray(fallbackData.announcements)) {
+        announcements = fallbackData.announcements;
+      }
+      if (fallbackData.settings) {
+        settings = fallbackData.settings;
+      }
+      return true;
+    }
+  } catch (_) {}
+
+  return false;
 }
 
 function renderSettings() {

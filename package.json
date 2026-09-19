@@ -4,6 +4,11 @@
   "private": true,
   "description": "Northwest University Kano timetable with a local JSON backend",
   "scripts": {
-    "dev": "node server.js"
+    "dev": "node backend/src/server.js",
+    "start": "node backend/src/server.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.116.0",
+    "pg": "^8.13.1"
   }
 }
