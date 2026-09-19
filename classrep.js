@@ -8,15 +8,18 @@ const supabaseClient = window.supabase
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   : null;
 
-const API_BASE = window.__API_BASE__ !== undefined
-  ? window.__API_BASE__
-  : (typeof window !== "undefined" &&
-     (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") &&
-     window.location.port &&
-     window.location.port !== "4000"
+const API_BASE =
+  window.__API_BASE__ !== undefined
+    ? window.__API_BASE__
+    : typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1") &&
+        window.location.port &&
+        window.location.port !== "4000"
       ? `http://${window.location.hostname}:4000`
-      : (typeof window !== "undefined" && window.location.protocol === "file:" ? "http://127.0.0.1:4000" : ""));
-
+      : typeof window !== "undefined" && window.location.protocol === "file:"
+        ? "http://127.0.0.1:4000"
+        : "";
 
 let currentSession = null;
 let courses = [];
@@ -46,7 +49,9 @@ async function fetchApi(path, options = {}) {
   const method = options.method || "GET";
   const fullUrl = `${API_BASE}${path}`;
 
-  console.log(`[fetchApi Request] Method: ${method} | API_BASE: "${API_BASE}" | Full URL: "${fullUrl}"`);
+  console.log(
+    `[fetchApi Request] Method: ${method} | API_BASE: "${API_BASE}" | Full URL: "${fullUrl}"`,
+  );
 
   const response = await fetch(fullUrl, {
     headers: {
@@ -70,7 +75,8 @@ async function fetchApi(path, options = {}) {
   }
 
   if (response.status === 401 || response.status === 403) {
-    const errorMsg = data && data.error ? data.error : `HTTP ${response.status}`;
+    const errorMsg =
+      data && data.error ? data.error : `HTTP ${response.status}`;
     showToast(`Access Denied: ${errorMsg}`);
     if (response.status === 401) {
       await supabaseClient.auth.signOut();
@@ -80,13 +86,12 @@ async function fetchApi(path, options = {}) {
   }
 
   if (!response.ok) {
-    const errorMsg = data && data.error ? data.error : text || `HTTP ${response.status}`;
+    const errorMsg =
+      data && data.error ? data.error : text || `HTTP ${response.status}`;
     throw new Error(`HTTP ${response.status}: ${errorMsg}`);
   }
   return data;
 }
-
-
 
 // UI State Management
 function updateUIForAuth(session) {
@@ -97,7 +102,8 @@ function updateUIForAuth(session) {
   if (session && session.user) {
     loginView.style.display = "none";
     dashboardView.style.display = "block";
-    document.querySelector("#classrep-user-email").textContent = session.user.email;
+    document.querySelector("#classrep-user-email").textContent =
+      session.user.email;
     initializeDashboard();
   } else {
     loginView.style.display = "block";
@@ -117,7 +123,10 @@ document.querySelector("#form-login").addEventListener("submit", async (e) => {
   const password = document.querySelector("#login-password").value;
 
   try {
-    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password,
+    });
     if (error) throw error;
     showToast("Login successful");
     updateUIForAuth(data.session);
@@ -139,12 +148,15 @@ document.querySelector("#btn-logout")?.addEventListener("click", async () => {
 // Tab Switching
 document.querySelectorAll("#classrep-tabs .day-tab").forEach((tab) => {
   tab.addEventListener("click", () => {
-    document.querySelectorAll("#classrep-tabs .day-tab").forEach((t) => t.classList.remove("is-active"));
+    document
+      .querySelectorAll("#classrep-tabs .day-tab")
+      .forEach((t) => t.classList.remove("is-active"));
     tab.classList.add("is-active");
 
     const targetTab = tab.dataset.tab;
     document.querySelectorAll(".admin-tab-content").forEach((section) => {
-      section.style.display = section.id === `tab-${targetTab}` ? "block" : "none";
+      section.style.display =
+        section.id === `tab-${targetTab}` ? "block" : "none";
     });
   });
 });
@@ -194,7 +206,7 @@ function renderCoursesTable() {
       <td>${c.lecturer || "—"}</td>
       <td>${c.pdf_filename || c.pdf_url ? "📄 Yes" : "—"}</td>
     </tr>
-  `
+  `,
     )
     .join("");
 }
@@ -219,7 +231,7 @@ function renderTimetableTable() {
         <button class="action-btn delete" onclick="deleteTimetable('${t.id}')">Delete</button>
       </td>
     </tr>
-  `
+  `,
     )
     .join("");
 }
@@ -243,7 +255,7 @@ function renderAnnouncementsTable() {
         <button class="action-btn delete" onclick="deleteAnnouncement('${a.id}')">Delete</button>
       </td>
     </tr>
-  `
+  `,
     )
     .join("");
 }
@@ -262,7 +274,8 @@ window.editTimetable = function (id) {
   const entry = timetable.find((t) => String(t.id) === String(id));
   if (!entry) return;
 
-  document.querySelector("#modal-timetable-title").textContent = "Edit Timetable Slot";
+  document.querySelector("#modal-timetable-title").textContent =
+    "Edit Timetable Slot";
   document.querySelector("#timetable-id").value = entry.id;
   document.querySelector("#timetable-course-id").value = entry.course_id;
   document.querySelector("#timetable-day").value = entry.day;
@@ -285,51 +298,67 @@ window.deleteTimetable = async function (id) {
 };
 
 document.querySelector("#btn-add-timetable")?.addEventListener("click", () => {
-  document.querySelector("#modal-timetable-title").textContent = "Add Timetable Slot";
+  document.querySelector("#modal-timetable-title").textContent =
+    "Add Timetable Slot";
   document.querySelector("#form-timetable").reset();
   document.querySelector("#timetable-id").value = "";
   document.querySelector("#modal-timetable").showModal();
 });
 
-document.querySelector("#close-modal-timetable")?.addEventListener("click", () => {
-  document.querySelector("#modal-timetable").close();
-});
-
-document.querySelector("#form-timetable")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const id = document.querySelector("#timetable-id").value;
-  const body = {
-    course_id: document.querySelector("#timetable-course-id").value,
-    day: document.querySelector("#timetable-day").value,
-    venue: document.querySelector("#timetable-venue").value.trim(),
-    start_time: document.querySelector("#timetable-start").value,
-    end_time: document.querySelector("#timetable-end").value,
-  };
-
-  try {
-    if (id) {
-      await fetchApi(`/api/timetable/${id}`, { method: "PUT", body: JSON.stringify(body) });
-      showToast("Timetable slot updated");
-    } else {
-      await fetchApi("/api/timetable", { method: "POST", body: JSON.stringify(body) });
-      showToast("Timetable slot created");
-    }
+document
+  .querySelector("#close-modal-timetable")
+  ?.addEventListener("click", () => {
     document.querySelector("#modal-timetable").close();
-    loadTimetable();
-  } catch (err) {
-    showToast("Save failed: " + err.message);
-  }
-});
+  });
+
+document
+  .querySelector("#form-timetable")
+  ?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const id = document.querySelector("#timetable-id").value;
+    const body = {
+      course_id: document.querySelector("#timetable-course-id").value,
+      day: document.querySelector("#timetable-day").value,
+      venue: document.querySelector("#timetable-venue").value.trim(),
+      start: document.querySelector("#timetable-start").value,
+      end: document.querySelector("#timetable-end").value,
+    };
+
+    console.log("TIMETABLE BODY:", body);
+
+    try {
+      if (id) {
+        await fetchApi(`/api/timetable/${id}`, {
+          method: "PUT",
+          body: JSON.stringify(body),
+        });
+        showToast("Timetable slot updated");
+      } else {
+        await fetchApi("/api/timetable", {
+          method: "POST",
+          body: JSON.stringify(body),
+        });
+        showToast("Timetable slot created");
+      }
+      document.querySelector("#modal-timetable").close();
+      loadTimetable();
+    } catch (err) {
+      showToast("Save failed: " + err.message);
+    }
+  });
 
 // Announcement Operations
 window.editAnnouncement = function (id) {
   const item = announcements.find((a) => String(a.id) === String(id));
   if (!item) return;
 
-  document.querySelector("#modal-announcement-title").textContent = "Edit Announcement";
+  document.querySelector("#modal-announcement-title").textContent =
+    "Edit Announcement";
   document.querySelector("#announcement-id").value = item.id;
   document.querySelector("#announcement-type").value = item.type;
-  document.querySelector("#announcement-published").value = item.published ? "true" : "false";
+  document.querySelector("#announcement-published").value = item.published
+    ? "true"
+    : "false";
   document.querySelector("#announcement-title").value = item.title;
   document.querySelector("#announcement-content").value = item.content;
 
@@ -347,41 +376,55 @@ window.deleteAnnouncement = async function (id) {
   }
 };
 
-document.querySelector("#btn-add-announcement")?.addEventListener("click", () => {
-  document.querySelector("#modal-announcement-title").textContent = "Add Announcement";
-  document.querySelector("#form-announcement").reset();
-  document.querySelector("#announcement-id").value = "";
-  document.querySelector("#modal-announcement").showModal();
-});
+document
+  .querySelector("#btn-add-announcement")
+  ?.addEventListener("click", () => {
+    document.querySelector("#modal-announcement-title").textContent =
+      "Add Announcement";
+    document.querySelector("#form-announcement").reset();
+    document.querySelector("#announcement-id").value = "";
+    document.querySelector("#modal-announcement").showModal();
+  });
 
-document.querySelector("#close-modal-announcement")?.addEventListener("click", () => {
-  document.querySelector("#modal-announcement").close();
-});
-
-document.querySelector("#form-announcement")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const id = document.querySelector("#announcement-id").value;
-  const body = {
-    type: document.querySelector("#announcement-type").value,
-    published: document.querySelector("#announcement-published").value === "true",
-    title: document.querySelector("#announcement-title").value.trim(),
-    content: document.querySelector("#announcement-content").value.trim(),
-  };
-
-  try {
-    if (id) {
-      await fetchApi(`/api/announcements/${id}`, { method: "PUT", body: JSON.stringify(body) });
-      showToast("Announcement updated");
-    } else {
-      await fetchApi("/api/announcements", { method: "POST", body: JSON.stringify(body) });
-      showToast("Announcement created");
-    }
+document
+  .querySelector("#close-modal-announcement")
+  ?.addEventListener("click", () => {
     document.querySelector("#modal-announcement").close();
-    loadAnnouncements();
-  } catch (err) {
-    showToast("Save failed: " + err.message);
-  }
-});
+  });
+
+document
+  .querySelector("#form-announcement")
+  ?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const id = document.querySelector("#announcement-id").value;
+    const body = {
+      type: document.querySelector("#announcement-type").value,
+      published:
+        document.querySelector("#announcement-published").value === "true",
+      title: document.querySelector("#announcement-title").value.trim(),
+      content: document.querySelector("#announcement-content").value.trim(),
+    };
+
+    try {
+      if (id) {
+        await fetchApi(`/api/announcements/${id}`, {
+          method: "PUT",
+          body: JSON.stringify(body),
+        });
+        showToast("Announcement updated");
+      } else {
+        await fetchApi("/api/announcements", {
+          method: "POST",
+          body: JSON.stringify(body),
+        });
+        showToast("Announcement created");
+      }
+      document.querySelector("#modal-announcement").close();
+      loadAnnouncements();
+    } catch (err) {
+      showToast("Save failed: " + err.message);
+    }
+  });
 
 // Initialization
 function initializeDashboard() {
