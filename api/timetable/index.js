@@ -1,11 +1,11 @@
 /**
- * Vercel serverless function for /api/timetable
+ * Vercel serverless function for /api/timetable (index)
  * Handles: GET /api/timetable, POST /api/timetable
  * Backed by PostgreSQL database (Supabase).
  */
-const pool = require("./_lib/db");
-const { requireClassRepOrAdmin } = require("./_lib/auth");
-const { setCorsHeaders, sendJson, sendError, parseBody } = require("./_lib/handler");
+const pool = require("../_lib/db");
+const { requireClassRepOrAdmin } = require("../_lib/auth");
+const { setCorsHeaders, sendJson, sendError, parseBody } = require("../_lib/handler");
 
 const timetableSelect = `
   SELECT t.id, t.course_id, c.code, c.name, c.tone, c.lecturer, c.description,
