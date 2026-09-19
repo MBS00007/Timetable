@@ -219,7 +219,9 @@ function renderTimetableTable() {
   }
   tbody.innerHTML = timetable
     .map(
-      (t) => `
+      (t) => {
+        const slotId = t.id !== undefined && t.id !== null ? t.id : (t._id || "");
+        return `
     <tr>
       <td><strong>${t.day}</strong></td>
       <td>${t.start} – ${t.end}</td>
@@ -227,11 +229,12 @@ function renderTimetableTable() {
       <td>${t.venue}</td>
       <td>${t.lecturer || "—"}</td>
       <td class="actions">
-        <button class="action-btn edit" onclick="editTimetable('${t.id}')">Edit</button>
-        <button class="action-btn delete" onclick="deleteTimetable('${t.id}')">Delete</button>
+        <button class="action-btn edit" onclick="editTimetable('${slotId}')">Edit</button>
+        <button class="action-btn delete" onclick="deleteTimetable('${slotId}')">Delete</button>
       </td>
     </tr>
-  `,
+  `;
+      },
     )
     .join("");
 }
@@ -271,12 +274,16 @@ function populateCourseDropdown() {
 
 // Timetable Operations
 window.editTimetable = function (id) {
-  const entry = timetable.find((t) => String(t.id) === String(id));
+  if (!id || id === "undefined" || id === "null") {
+    showToast("Edit failed: Invalid or missing timetable ID");
+    return;
+  }
+  const entry = timetable.find((t) => String(t.id ?? t._id) === String(id));
   if (!entry) return;
 
   document.querySelector("#modal-timetable-title").textContent =
     "Edit Timetable Slot";
-  document.querySelector("#timetable-id").value = entry.id;
+  document.querySelector("#timetable-id").value = entry.id ?? entry._id ?? "";
   document.querySelector("#timetable-course-id").value = entry.course_id;
   document.querySelector("#timetable-day").value = entry.day;
   document.querySelector("#timetable-venue").value = entry.venue;
@@ -287,9 +294,13 @@ window.editTimetable = function (id) {
 };
 
 window.deleteTimetable = async function (id) {
+  if (!id || id === "undefined" || id === "null") {
+    showToast("Delete failed: Invalid or missing timetable ID");
+    return;
+  }
   if (!confirm("Are you sure you want to delete this timetable slot?")) return;
   try {
-    await fetchApi(`/api/timetable/${id}`, { method: "DELETE" });
+    await fetchApi(`/api/timetable/${encodeURIComponent(id)}`, { method: "DELETE" });
     showToast("Timetable slot deleted");
     loadTimetable();
   } catch (err) {
@@ -366,9 +377,13 @@ window.editAnnouncement = function (id) {
 };
 
 window.deleteAnnouncement = async function (id) {
+  if (!id || id === "undefined" || id === "null") {
+    showToast("Delete failed: Invalid or missing announcement ID");
+    return;
+  }
   if (!confirm("Are you sure you want to delete this announcement?")) return;
   try {
-    await fetchApi(`/api/announcements/${id}`, { method: "DELETE" });
+    await fetchApi(`/api/announcements/${encodeURIComponent(id)}`, { method: "DELETE" });
     showToast("Announcement deleted");
     loadAnnouncements();
   } catch (err) {
