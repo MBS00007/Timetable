@@ -219,9 +219,7 @@ function renderTimetableTable() {
   }
   tbody.innerHTML = timetable
     .map(
-      (t) => {
-        const slotId = t.id !== undefined && t.id !== null ? t.id : (t._id || "");
-        return `
+      (t) => `
     <tr>
       <td><strong>${t.day}</strong></td>
       <td>${t.start} – ${t.end}</td>
@@ -229,12 +227,11 @@ function renderTimetableTable() {
       <td>${t.venue}</td>
       <td>${t.lecturer || "—"}</td>
       <td class="actions">
-        <button class="action-btn edit" onclick="editTimetable('${slotId}')">Edit</button>
-        <button class="action-btn delete" onclick="deleteTimetable('${slotId}')">Delete</button>
+        <button class="action-btn edit" onclick="editTimetable('${t.id}')">Edit</button>
+        <button class="action-btn delete" onclick="deleteTimetable('${t.id}')">Delete</button>
       </td>
     </tr>
-  `;
-      },
+  `,
     )
     .join("");
 }
@@ -278,12 +275,12 @@ window.editTimetable = function (id) {
     showToast("Edit failed: Invalid or missing timetable ID");
     return;
   }
-  const entry = timetable.find((t) => String(t.id ?? t._id) === String(id));
+  const entry = timetable.find((t) => String(t.id) === String(id));
   if (!entry) return;
 
   document.querySelector("#modal-timetable-title").textContent =
     "Edit Timetable Slot";
-  document.querySelector("#timetable-id").value = entry.id ?? entry._id ?? "";
+  document.querySelector("#timetable-id").value = entry.id;
   document.querySelector("#timetable-course-id").value = entry.course_id;
   document.querySelector("#timetable-day").value = entry.day;
   document.querySelector("#timetable-venue").value = entry.venue;
