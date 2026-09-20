@@ -20,47 +20,84 @@
         <header class="topbar">
           <div class="topbar-meta">
             <span class="status-pill"><i></i>Class Rep Portal</span>
-            <a href="index.html" class="outline-button nav-back-btn">← Back to Public Site</a>
+            <a href="index.html" class="outline-button nav-back-btn"
+              >← Back to Public Site</a
+            >
           </div>
         </header>
 
         <div class="content-wrap">
           <!-- Login View (Shown when unauthenticated) -->
-          <section id="view-login" style="max-width: 440px; margin: 40px auto 0;">
-            <div class="identity-block" style="flex-direction: column; text-align: center; gap: 16px; margin-bottom: 24px;">
+          <section
+            id="view-login"
+            style="max-width: 440px; margin: 40px auto 0"
+          >
+            <div
+              class="identity-block"
+              style="
+                flex-direction: column;
+                text-align: center;
+                gap: 16px;
+                margin-bottom: 24px;
+              "
+            >
               <img
                 class="crest-image crest-large"
                 src="northwest-university-logo.png"
                 alt="Northwest University, Kano crest"
-                style="margin: 0 auto;"
+                style="margin: 0 auto"
               />
               <div>
                 <h1>Class Rep Portal Login</h1>
                 <p class="identity-copy">
-                  Sign in with your Class Representative credentials to post announcements and manage schedule updates.
+                  Sign in with your Class Representative credentials to post
+                  announcements and manage schedule updates.
                 </p>
               </div>
             </div>
 
-            <form id="form-login" class="notice-panel" style="display: block;">
-              <div id="login-error" class="login-error-msg" style="display: none;"></div>
+            <form id="form-login" class="notice-panel" style="display: block">
+              <div
+                id="login-error"
+                class="login-error-msg"
+                style="display: none"
+              ></div>
               <div class="admin-form-group">
                 <label for="login-email">Class Rep Email</label>
-                <input type="email" id="login-email" placeholder="classrep@nwu.edu.ng" required />
+                <input
+                  type="email"
+                  id="login-email"
+                  placeholder="classrep@nwu.edu.ng"
+                  required
+                />
               </div>
               <div class="admin-form-group">
                 <label for="login-password">Password</label>
-                <input type="password" id="login-password" placeholder="••••••••" required />
+                <input
+                  type="password"
+                  id="login-password"
+                  placeholder="••••••••"
+                  required
+                />
               </div>
-              <div style="margin-top: 20px;">
-                <button type="submit" class="calendar-primary" style="width: 100%;">Sign In to Class Rep Portal</button>
+              <div style="margin-top: 20px">
+                <button
+                  type="submit"
+                  class="calendar-primary"
+                  style="width: 100%"
+                >
+                  Sign In to Class Rep Portal
+                </button>
               </div>
             </form>
           </section>
 
           <!-- Class Rep Dashboard View (Shown when authenticated) -->
-          <div id="view-dashboard" style="display: none;">
-            <section class="identity-block" style="margin-bottom: 24px; position: relative;">
+          <div id="view-dashboard" style="display: none">
+            <section
+              class="identity-block"
+              style="margin-bottom: 24px; position: relative"
+            >
               <img
                 class="crest-image crest-large"
                 src="northwest-university-logo.png"
@@ -68,24 +105,57 @@
               />
               <div>
                 <p class="institution-line">
-                  Faculty of Computing <b>•</b> Department of Software Engineering
+                  Faculty of Computing <b>•</b> Department of Software
+                  Engineering
                 </p>
-                <h1>Class Rep Share Platform</h1>
+                <h1>Class Rep</h1>
                 <p class="identity-copy">
-                  Logged in as <strong id="classrep-user-email">classrep@nwu.edu.ng</strong>
+                  Logged in as
+                  <strong id="classrep-user-email">classrep@nwu.edu.ng</strong>
                 </p>
               </div>
-              <div style="position: absolute; right: 0; top: 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                <a href="index.html" class="outline-button nav-back-btn" style="padding: 6px 12px; font-size: 12px;">View Public Site ↗</a>
-                <button id="btn-logout" class="action-btn delete" style="padding: 6px 14px;">Sign Out</button>
+              <div
+                style="
+                  position: absolute;
+                  right: 0;
+                  top: 0;
+                  display: flex;
+                  gap: 8px;
+                  align-items: center;
+                  flex-wrap: wrap;
+                "
+              >
+                <a
+                  href="index.html"
+                  class="outline-button nav-back-btn"
+                  style="padding: 6px 12px; font-size: 12px"
+                  >View Public Site ↗</a
+                >
+                <button
+                  id="btn-logout"
+                  class="action-btn delete"
+                  style="padding: 6px 14px"
+                >
+                  Sign Out
+                </button>
               </div>
             </section>
 
             <!-- Class Rep Navigation Tabs -->
             <div class="day-tabs" role="tablist" id="classrep-tabs">
-              <button class="day-tab is-active" data-tab="announcements" role="tab">📢 Announcements</button>
-              <button class="day-tab" data-tab="timetable" role="tab">📅 Timetable Slots</button>
-              <button class="day-tab" data-tab="courses" role="tab">📘 Course Directory</button>
+              <button
+                class="day-tab is-active"
+                data-tab="announcements"
+                role="tab"
+              >
+                📢 Announcements
+              </button>
+              <button class="day-tab" data-tab="timetable" role="tab">
+                📅 Timetable Slots
+              </button>
+              <button class="day-tab" data-tab="courses" role="tab">
+                📘 Course Directory
+              </button>
             </div>
 
             <!-- Announcements Tab Content -->
@@ -93,11 +163,28 @@
               <div class="admin-header">
                 <div>
                   <h2>Class Announcements</h2>
-                  <p>Publish room changes, lecture updates, and urgent student notices.</p>
+                  <p>
+                    Publish room changes, lecture updates, and urgent student
+                    notices.
+                  </p>
                 </div>
-                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                  <a href="index.html#announcements" class="outline-button nav-back-btn" style="padding: 8px 14px; font-size: 13px;">View Public Announcements ↗</a>
-                  <button class="calendar-primary" id="btn-add-announcement">＋ Add Announcement</button>
+                <div
+                  style="
+                    display: flex;
+                    gap: 10px;
+                    align-items: center;
+                    flex-wrap: wrap;
+                  "
+                >
+                  <a
+                    href="index.html#announcements"
+                    class="outline-button nav-back-btn"
+                    style="padding: 8px 14px; font-size: 13px"
+                    >View Public Announcements ↗</a
+                  >
+                  <button class="calendar-primary" id="btn-add-announcement">
+                    ＋ Add Announcement
+                  </button>
                 </div>
               </div>
               <div class="admin-table-wrap">
@@ -112,20 +199,31 @@
                     </tr>
                   </thead>
                   <tbody id="announcements-table-body">
-                    <tr><td colspan="5">Loading announcements...</td></tr>
+                    <tr>
+                      <td colspan="5">Loading announcements...</td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
             </section>
 
             <!-- Timetable Tab Content -->
-            <section id="tab-timetable" class="admin-tab-content" style="display: none;">
+            <section
+              id="tab-timetable"
+              class="admin-tab-content"
+              style="display: none"
+            >
               <div class="admin-header">
                 <div>
                   <h2>Class Timetable Slots</h2>
-                  <p>Manage class schedule slots, lecture times, and assigned venues.</p>
+                  <p>
+                    Manage class schedule slots, lecture times, and assigned
+                    venues.
+                  </p>
                 </div>
-                <button class="calendar-primary" id="btn-add-timetable">＋ Add Timetable Slot</button>
+                <button class="calendar-primary" id="btn-add-timetable">
+                  ＋ Add Timetable Slot
+                </button>
               </div>
               <div class="admin-table-wrap">
                 <table class="admin-table">
@@ -140,18 +238,26 @@
                     </tr>
                   </thead>
                   <tbody id="timetable-table-body">
-                    <tr><td colspan="6">Loading timetable entries...</td></tr>
+                    <tr>
+                      <td colspan="6">Loading timetable entries...</td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
             </section>
 
             <!-- Courses Tab Content (Read-Only) -->
-            <section id="tab-courses" class="admin-tab-content" style="display: none;">
+            <section
+              id="tab-courses"
+              class="admin-tab-content"
+              style="display: none"
+            >
               <div class="admin-header">
                 <div>
                   <h2>Course Directory (Read Only)</h2>
-                  <p>View registered department courses and lecturer assignments.</p>
+                  <p>
+                    View registered department courses and lecturer assignments.
+                  </p>
                 </div>
               </div>
               <div class="admin-table-wrap">
@@ -165,7 +271,9 @@
                     </tr>
                   </thead>
                   <tbody id="courses-table-body">
-                    <tr><td colspan="4">Loading courses...</td></tr>
+                    <tr>
+                      <td colspan="4">Loading courses...</td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -173,8 +281,8 @@
           </div>
         </div>
 
-        <footer style="margin-top: 60px;">
-          <span>Northwest University, Kano — Class Rep Share Platform</span>
+        <footer style="margin-top: 60px">
+          <span>Northwest University, Kano — Class Rep</span>
         </footer>
       </main>
     </div>
@@ -205,7 +313,12 @@
           </div>
           <div class="admin-form-group">
             <label for="timetable-venue">Venue *</label>
-            <input type="text" id="timetable-venue" placeholder="e.g. LT 1" required />
+            <input
+              type="text"
+              id="timetable-venue"
+              placeholder="e.g. LT 1"
+              required
+            />
           </div>
         </div>
         <div class="admin-form-grid">
@@ -219,7 +332,9 @@
           </div>
         </div>
         <div class="admin-modal-actions">
-          <button type="button" class="action-btn" id="close-modal-timetable">Cancel</button>
+          <button type="button" class="action-btn" id="close-modal-timetable">
+            Cancel
+          </button>
           <button type="submit" class="calendar-primary">Save Slot</button>
         </div>
       </form>
@@ -250,15 +365,33 @@
         </div>
         <div class="admin-form-group">
           <label for="announcement-title">Title *</label>
-          <input type="text" id="announcement-title" placeholder="e.g. SEN 226 moves to Software Engineering Lab 2" required />
+          <input
+            type="text"
+            id="announcement-title"
+            placeholder="e.g. SEN 226 moves to Software Engineering Lab 2"
+            required
+          />
         </div>
         <div class="admin-form-group">
           <label for="announcement-content">Content / Copy *</label>
-          <textarea id="announcement-content" rows="4" placeholder="Detailed announcement notice text..." required></textarea>
+          <textarea
+            id="announcement-content"
+            rows="4"
+            placeholder="Detailed announcement notice text..."
+            required
+          ></textarea>
         </div>
         <div class="admin-modal-actions">
-          <button type="button" class="action-btn" id="close-modal-announcement">Cancel</button>
-          <button type="submit" class="calendar-primary">Save Announcement</button>
+          <button
+            type="button"
+            class="action-btn"
+            id="close-modal-announcement"
+          >
+            Cancel
+          </button>
+          <button type="submit" class="calendar-primary">
+            Save Announcement
+          </button>
         </div>
       </form>
     </dialog>
